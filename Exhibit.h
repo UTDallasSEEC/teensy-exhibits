@@ -1,17 +1,18 @@
 const char* SEEC_LOGFILE = "SEECLOG.CSV";
 File logFile;
 void logEntry(const char* s, const char *msg = NULL) {
-  logFile = SD.open(SEEC_LOGFILE, FILE_WRITE);
-  if (!logFile) return;
-  logFile.print(Teensy3Clock.get());
-  logFile.print(",");
-  logFile.print(s);
-  logFile.print(",\"");
-  if (msg) logFile.print(msg);
-  logFile.println("\"");
-  logFile.close();
-}
+  String logText = String(Teensy3Clock.get()) + "," + String(s) + ",\"";
+  if (msg) logText += String(msg);
+  logText += "\"";
 
+  logFile = SD.open(SEEC_LOGFILE, FILE_WRITE);
+  if (logFile) { 
+    logFile.println(logText);
+    logFile.close(); 
+  }
+  Serial.println(logText);
+  Serial.flush();
+}
 
 
 #define SEEC_RTC_STATUS (*(uint32_t *)0x4003E018)
@@ -36,4 +37,38 @@ class Exhibit {
         logEntry("RTCSET");
       }  
     }
+};
+
+
+class EdgeLogger {
+  public:
+    unsigned long startLock = 0;
+    int lastTF = 0;
+
+    int isLocked(unsigned long lockout) { return (millis() - startLock < lockout); }
+
+    int logRise(int tf, unsigned long lockout, 
+                 const char* s, const char* msg = NULL) {
+      if (isLocked(lockout)) return 0;
+      int rise = (tf && !lastTF);
+      if (rise) {
+         logEntry(s, msg);
+         startLock = millis();
+      }
+      lastTF = tf;
+      return rise;
+    }
+
+    int logFall(int tf, unsigned long lockout, 
+                 const char* s, const char* msg = NULL) {
+      if (isLocked(lockout)) return 0;
+      int fall = (!tf && lastTF);
+      if (fall) {
+         logEntry(s, msg);
+         startLock = millis();
+      }
+      lastTF = tf;
+      return fall;
+    }
+
 };

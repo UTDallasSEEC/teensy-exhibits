@@ -1,16 +1,20 @@
 #include <SD.h>
 #include <SPI.h>
 #include "Exhibit.h"
+#include "Ionosphere.h"
 
 void setup() {
+  Serial.begin(115200);
   SD.begin(BUILTIN_SDCARD);
+  delay(100);  
   logEntry("SETUP", "Exhibit startup");
   Exhibit::rtc_init();
-  Serial.begin(115200);
+  Ionosphere::setup();
 }
 
 void loop() {
   if (Serial.available()) parse_command();
+  Ionosphere::loop();
 }
 
 
