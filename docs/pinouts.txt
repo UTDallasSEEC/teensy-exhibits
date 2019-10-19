@@ -1,0 +1,25 @@
+Raspberry Pi 40 pin header notes (for AdaFruit Proto Bonnet):
+
+
+    3.3v             3V  5V        5v
+    I2C/SDA      1    .  5V        5v
+    I2C/SCL           .   G   3G   GND
+    GPIO 4       1    .   .   4    TX
+    GND               G   .   3    RX
+    GPIO17       1    .   .   4    GPIO18
+    GPIO27            .   G   3    GND
+    GPIO22       1    .   .   4    GPIO23
+    3.3v             3V   .   3    GPIO24
+    MOSI         1    .   G   4G   GND
+    MISO              .   .   3    GPIO25
+    SCLK         1    .   .   4    GPIO8
+    GND               G   .   3    GPIO7
+    Rsrv              X   X        Rsrv
+    GPIO 5            .   G   3G   GND
+    GPIO 6       2    .   .   4    GPIO12
+    GPIO 13           .   G   3G   GND
+    GPIO 19      2    .   .   4    GPIO16
+    GPIO 26           .   .   3    GPIO20
+    GND          2G   G   .   4    GPIO21
+
+
